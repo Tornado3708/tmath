@@ -1,0 +1,17 @@
+{
+  "name": "@tornado3708/tmath",
+  "version": "0.8.0",
+  "description": "Math library.",
+  "main": "dist/cjs/index.js",
+  "browser": "dist/esm/index.js",
+  "types": "types/tmath.d.ts",
+  "scripts": {
+    "build": "tsc & tsc -p tsconfig.esm.json",
+    "clear": "tsc --build --clear & tsc -p tsconfig.esm.json --build --clear"
+  },
+  "author": "Tornado3708",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}
