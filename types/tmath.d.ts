@@ -1,38 +1,41 @@
-declare module 'tmath' {
+declare module "tmath" {
 // region primitive types start
+  type HasX = { x: number; };
+  type HasY = { y: number; };
+  type HasZ = { z: number; };
 
-type HasX = { x: number; };
-type HasY = { y: number; };
-type HasZ = { z: number; };
+  type HasYaw   = { yaw:   number; };
+  type HasRoll  = { roll:  number; };
+  type HasPitch = { pitch: number; };
 
-type HasYaw   = { yaw:   number; };
-type HasRoll  = { roll:  number; };
-type HasPitch = { pitch: number; };
+  type HasRadius = { radius: number; };
 
-type HasRadius = { radius: number; };
+  type HasWidth  = { width:  number; };
+  type HasHeight = { height: number; };
+  type HasDepth  = { depth:  number; };
 
-type HasWidth  = { width:  number; };
-type HasHeight = { height: number; };
-type HasDepth  = { depth:  number; };
+  type HasValues = { values: number[]; };
 
-type HasValues = { values: number[]; };
-
-// region primitive types end
+  type HasArea<T extends (HasRadius | Dimension)> = {area (...args: [T]): number; }
+  type HasVolume<T extends (HasRadius | (Dimension & HasDepth))> = {volume (...args: [T]): number; }
+  // region primitive types end
 
 
 
 // region composed types start
 
-type Vector2D = HasX & HasY;
-type Vector3D = Vector2D & HasZ;
-type Dimension = HasWidth & HasHeight;
+  type Vector2D = HasX & HasY;
+  type Vector3D = Vector2D & HasZ;
+  type Line2D = { x1: number; x2: number; y1: number; y2: number; };
+  type Line3D = Line2D & { z1: number; z2: number; };
+  type Dimension = HasWidth & HasHeight;
 
-type Rectangle = Vector2D & Dimension;
-type Cube = Vector3D & Dimension & HasDepth;
-type Circle = Vector2D & HasRadius;
-type Sphere = Vector3D & HasRadius;
+  type Rectangle = Vector2D & Dimension;
+  type Cuboid = Vector3D & Dimension & HasDepth;
+  type Circle = Vector2D & HasRadius;
+  type Sphere = Vector3D & HasRadius;
 
-type Matrix = Dimension & HasValues;
+  type Matrix = Dimension & HasValues;
 
 // region composed types end
 
@@ -42,22 +45,23 @@ type Matrix = Dimension & HasValues;
 
 
 // region constructor types start
-type Vector2DParameters = [vec: Vector3D] | [x: number, y: number] | [];
-type Vector2DConstructor = {
-  (...args: Vector2DParameters): Vector2D;
+  type Vector2DParameters = [vec: Vector2D] | [x: number, y: number] | [];
+  type Vector2DConstructor = {
+    (...args: Vector2DParameters): Vector2D;
   
-  add (a: Vector2D, b: Vector2D): Vector2D;
-  sub (a: Vector2D, b: Vector2D): Vector2D;
-  hadamard (a: Vector2D, b: Vector2D): Vector2D;
+    add (a: Vector2D, b: Vector2D): Vector2D;
+    sub (a: Vector2D, b: Vector2D): Vector2D;
+    hadamard (a: Vector2D, b: Vector2D): Vector2D;
   
-  unit (vec: Vector2D): Vector2D;
-  mag (vec: Vector2D): number;
-  yaw (vec: Vector2D): number;
+    unit (vec: Vector2D): Vector2D;
+    mag (vec: Vector2D): number;
+    yaw (vec: Vector2D): number;
   
-  dot (a: Vector2D, b: Vector2D): number;
-  cross (a: Vector2D, b: Vector2D): number;
+    dot (a: Vector2D, b: Vector2D): number;
+    cross (a: Vector2D, b: Vector2D): number;
+
+    toArray (vec: Vector2D): [number, number];
   }
-  
   
   
   type Vector3DParameters = [vec: Vector3D] | [x: number, y: number, z: number] | [];
@@ -76,15 +80,25 @@ type Vector2DConstructor = {
     
     dot (a: Vector3D, b: Vector3D): number;
     cross (a: Vector3D, b: Vector3D): Vector3D;
-    };
+
+    toArray (vec: Vector3D): [number, number, number];
+  };
+
+
+  type Line2DParameters = [x1: number, y1: number, x2: number, y2: number] | [from: Vector2D, to: Vector2D];
+  type Line2DConstructor = {
+    (...args: Line2DParameters): Line2D;
+    points (line: Line2D): [Vector2D, Vector2D];
+    duration (line: Line2D): number;
+  };
 
     
-    
-type DimensionConstructor = {
-  (width: number, height: number): Dimension;
-}
+  type DimensionParameters = [width: number, height: number] | [dimension: Dimension] | [];
+  type DimensionConstructor = {
+    (...args: DimensionParameters): Dimension;
+  }
 
-type RectangleParameters = [width: number, height: number] | [x: number, y: number, width: number, height: number] | [rectangle: Rectangle] | [dimension: Dimension] | [pos: Vector2D, dimension: Dimension];
+type RectangleParameters = [width: number, height: number] | [x: number, y: number, width: number, height: number] | [dimension: Dimension] | [pos: Vector2D, dimension: Dimension] | [rectangle: Rectangle] | [];
 type RectangleConstructor = {
   (...args: RectangleParameters): Rectangle;
 
@@ -100,9 +114,9 @@ type RectangleConstructor = {
     y (rectangle: HasY & HasHeight): number;
   };
 
-  area (rectangle: Rectangle): number;
-  diagonal (rectangle: Rectangle): number;
-}
+  diagonal (rectangle: Dimension): number;
+  perimeter (rectangle: Dimension): number;
+} & HasArea<Dimension>;
 
 type CircleParameters = [radius: number] | [radius: number, x: number, y: number] | [radius: HasRadius] | [circle: Circle];
 type CircleConstructor = {
@@ -110,12 +124,16 @@ type CircleConstructor = {
 
   diameter (circle: HasRadius): number;
   circumstance (circle: HasRadius): number;
-};
+  distance (a: Circle, b: Circle): number;
+} & HasArea<HasRadius>;
 
 
-/**
- * See {@link ./../dev.md#matrix}
- */
+type CuboidConstructor = {
+  (width: number, height: number, depth: number): Cuboid;
+  (x: number, y: number, z: number, width: number, height: number, depth: number): Cuboid;
+}
+
+
 type MatrixConstructor = {
   (width: number, height: number, values: number[]): Matrix;
   
@@ -147,27 +165,5 @@ type MatrixConstructor = {
     mul (row: number, k: number, matrix: Matrix): Matrix;
     add (firstRow: number, secondRow: number, k: number, matrix: Matrix): Matrix;
   };
-}
-    
-    // region constructor types end
-    
-
-    
-    // region constants start
-    
-    export const Vector2D: Vector2DConstructor;
-    export const Vector3D: Vector3DConstructor;
-    export const Dimension: DimensionConstructor;
-    export const Rectangle: RectangleConstructor;
-    export const Circle: CircleConstructor;
-    
-    export const Matrix: MatrixConstructor;
-    
-    // region constants end
-
-
-
-    // region functions start
-    export const lerp: (from: number, to: number, t: number) => number;
-    // region function end
+  }
 }

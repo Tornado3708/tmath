@@ -1,5 +1,5 @@
+import { MatrixConstructor, Matrix, Dimension } from "tmath";
 import buffer from "./buffer.js";
-import { Dimension, Matrix, MatrixConstructor } from "tmath";
 
 /**
  * Creates instance of Matrix.
@@ -98,7 +98,7 @@ const _matrix: MatrixConstructor = (width: number, height: number, values: numbe
 
 
 
-_matrix.isScalar = ({width, height}: Dimension) => (width === 1 && height === 1);
+_matrix.isScalar = isScalar;
 _matrix.isVector = isVector;
 _matrix.isSquare = isSquare;
 

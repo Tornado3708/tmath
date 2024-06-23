@@ -1,5 +1,5 @@
 import buffer from "./buffer.js";
-import { Vector2D } from "tmath";
+import Vector2D from "./Vector2D.js";
 const rectangle = (...args) => {
     if (!args.length)
         return rectangle(0, 0, 0, 0);
@@ -33,4 +33,6 @@ const rectangle = (...args) => {
 }
 rectangle.area = ({ width, height }) => width * height;
 rectangle.diagonal = ({ width, height }) => Math.hypot(width, height);
+rectangle.perimeter = ({ width, height }) => (width + height) * 2;
 export default Object.freeze(rectangle);
+//# sourceMappingURL=Rectangle.js.map

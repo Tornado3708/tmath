@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const buffer_js_1 = __importDefault(require("./buffer.js"));
+const Point2D_js_1 = __importDefault(require("./Point2D.js"));
 const _circle = (...args) => {
     if (!args.length)
         return _circle(0, 0, 0);
@@ -13,9 +14,9 @@ const _circle = (...args) => {
         return c;
     }
     const _args = [];
-    if ('radius' in args[0]) {
+    if (Reflect.has(args[0], 'radius')) {
         _args.push(args[0].radius);
-        if ('x' in args[0] && 'y' in args[0]) {
+        if (Reflect.has(args[0], 'x') && 'y' in args[0]) {
             _args.push(args[0].x, args[0].y);
         }
     }
@@ -23,4 +24,7 @@ const _circle = (...args) => {
 };
 _circle.diameter = ({ radius }) => radius * 2;
 _circle.circumstance = (circle) => _circle.diameter(circle) * Math.PI;
+_circle.area = ({ radius }) => Math.PI * Math.pow(radius, 2);
+_circle.distance = (a, b) => Point2D_js_1.default.distance(a, b) - (a.radius + b.radius);
 exports.default = Object.freeze(_circle);
+//# sourceMappingURL=Circle.js.map

@@ -74,3 +74,4 @@ function createSlopeSetter(prop) {
     })).get(prop);
 }
 // types region end
+//# sourceMappingURL=buffer.js.map

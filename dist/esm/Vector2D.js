@@ -8,7 +8,7 @@ const _vector2d = (...args) => {
         return vec;
     }
     else
-        return _vector2d(args[0].x, args[0].y);
+        return _vector2d(..._vector2d.toArray(args[0]));
 };
 /**
  * Magnitude, length.
@@ -37,4 +37,6 @@ _vector2d.unit = ({ x, y }) => {
 };
 _vector2d.dot = (a, b) => a.x * b.x + a.y * b.y;
 _vector2d.cross = (a, b) => a.x * b.y - a.y * b.x;
+_vector2d.toArray = ({ x, y }) => [x, y];
 export default Object.freeze(_vector2d);
+//# sourceMappingURL=Vector2D.js.map

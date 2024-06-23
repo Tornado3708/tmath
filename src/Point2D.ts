@@ -1,8 +1,8 @@
 import _Vector2D from "./Vector2D.js";
-import buffer from "./buffer.js";
-import { Vector2D } from "tmath";
+import {Vector2D, Vector2DParameters} from "tmath";
 
-
-const p2d = (x = 0, y = 0): Vector2D => _Vector2D(x, y);
+const p2d = (...args: Vector2DParameters) => _Vector2D(...args);
 
 p2d.distance = (a: Vector2D, b: Vector2D) => Math.hypot(a.x - b.x, a.y - b.y);
+
+export default Object.freeze(p2d);

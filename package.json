@@ -1,17 +1,21 @@
 {
-  "name": "@tornado3708/tmath",
+  "name": "tmath",
   "version": "0.8.0",
   "description": "Math library.",
-  "main": "dist/cjs/index.js",
-  "browser": "dist/esm/index.js",
-  "types": "types/tmath.d.ts",
+  "types": "./dist/cjs/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "scripts": {
-    "build": "tsc & tsc -p tsconfig.esm.json",
-    "clear": "tsc --build --clear & tsc -p tsconfig.esm.json --build --clear"
+    "build": "tsc && tsc --project tsconfig.esm.json",
+    "clear": "tsc --build --clean && tsc --build --clean tsconfig.esm.json"
   },
   "author": "Tornado3708",
   "license": "MIT",
   "devDependencies": {
+    "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@types/node": "^20.14.8"
   }
 }

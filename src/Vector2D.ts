@@ -1,5 +1,5 @@
+import { HasX, HasY, Vector2D, Vector2DConstructor } from "tmath";
 import buffer from "./buffer.js";
-import { Vector2D, Vector2DConstructor, HasX, HasY } from "tmath";
 
 
 
@@ -10,7 +10,7 @@ const _vector2d: Vector2DConstructor = (...args) => {
       const vec = buffer.create('x', 'y') as Vector2D;
       [vec.x, vec.y] = [...args] as [number, number];
       return vec;
-  } else return _vector2d((args[0] as HasX).x, (args[0] as HasY).y)
+  } else return _vector2d(..._vector2d.toArray(args[0]));
 };
 
 /**
@@ -44,8 +44,9 @@ _vector2d.unit = ({x, y}: Vector2D) => {
 
 _vector2d.dot = (a: Vector2D, b: Vector2D): number => a.x * b.x + a.y * b.y;
 _vector2d.cross = (a: Vector2D, b: Vector2D): number => a.x * b.y - a.y * b.x;
+_vector2d.toArray = ({x, y}: Vector2D): [number, number] => [x, y]; 
 
-export default Object.freeze(_vector2d);
+export default Object.freeze(_vector2d) as Vector2DConstructor;
 
 
 

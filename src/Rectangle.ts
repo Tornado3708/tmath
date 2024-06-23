@@ -1,9 +1,9 @@
+import { RectangleConstructor, Rectangle, HasX, HasY, HasWidth, HasHeight } from "tmath";
 import buffer from "./buffer.js";
-import { HasHeight, HasWidth, HasX, HasY, Rectangle, RectangleConstructor, Vector2D, Dimension } from "tmath";
+import Vector2D from "./Vector2D.js";
 
 
-type RectangleParameters = [width: number, height: number] | [x: number, y: number, width: number, height: number] | [dimension: Dimension] | [pos: Vector2D, dimension: Dimension] | [rectangle: Rectangle] | [];
-const rectangle: RectangleConstructor = (...args: RectangleParameters) => {
+const rectangle: RectangleConstructor = (...args) => {
   if (!args.length) return rectangle(0, 0, 0, 0);
 
   if (typeof args[0] !== 'object') {
@@ -46,8 +46,8 @@ const rectangle: RectangleConstructor = (...args: RectangleParameters) => {
 
 
 
-rectangle.area = ({width, height}: Dimension) => width * height;
-rectangle.diagonal = ({width, height}: Dimension) => Math.hypot(width, height);
-
+rectangle.area = ({width, height}) => width * height;
+rectangle.diagonal = ({width, height}) => Math.hypot(width, height);
+rectangle.perimeter = ({width, height}) => (width + height) * 2;
 
 export default Object.freeze(rectangle);

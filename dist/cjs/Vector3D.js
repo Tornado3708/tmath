@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Vector2D_js_1 = __importDefault(require("./Vector2D.js"));
 const buffer_js_1 = __importDefault(require("./buffer.js"));
-const tmath_1 = require("tmath");
 const _vector3d = (...args) => {
     if (!args.length)
         return _vector3d(0, 0, 0);
@@ -22,15 +21,17 @@ _vector3d.pitch = ({ x, z }) => Math.atan2(x, z);
 _vector3d.roll = ({ y, z }) => Math.atan2(z, y);
 _vector3d.yaw = Vector2D_js_1.default.yaw;
 {
-    const abstractAddition = (callback) => (a, b) => (0, tmath_1.Vector3D)(callback(a.x, b.x), callback(a.y, b.y), callback(a.z, b.z));
+    const abstractAddition = (callback) => (a, b) => _vector3d(callback(a.x, b.x), callback(a.y, b.y), callback(a.z, b.z));
     _vector3d.add = abstractAddition((a, b) => a + b);
     _vector3d.sub = abstractAddition((a, b) => a - b);
     _vector3d.hadamard = abstractAddition((a, b) => a * b);
 }
-_vector3d.unit = ({ x, y, z }) => {
-    const inverse = 1 / Math.hypot(x, y, z);
-    return _vector3d(x * inverse, y * inverse, z * inverse);
-};
-_vector3d.dot = (a, b) => a.x * b.x + a.y + b.y + a.z * b.z;
+{
+    const divArr = (arr, fraq) => arr.map(x => x * fraq);
+    _vector3d.unit = ({ x, y, z }) => _vector3d(...divArr([x, y, z], 1 / Math.hypot(x, y, z)));
+}
+_vector3d.dot = (a, b) => Vector2D_js_1.default.dot(a, b) + a.z * b.z;
 _vector3d.cross = (a, b) => _vector3d(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, Vector2D_js_1.default.cross(a, b));
+_vector3d.toArray = ({ x, y, z }) => [x, y, z];
 exports.default = Object.freeze(_vector3d);
+//# sourceMappingURL=Vector3D.js.map

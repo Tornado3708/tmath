@@ -1,4 +1,5 @@
 import buffer from "./buffer.js";
+import Point2D from "./Point2D.js";
 const _circle = (...args) => {
     if (!args.length)
         return _circle(0, 0, 0);
@@ -8,9 +9,9 @@ const _circle = (...args) => {
         return c;
     }
     const _args = [];
-    if ('radius' in args[0]) {
+    if (Reflect.has(args[0], 'radius')) {
         _args.push(args[0].radius);
-        if ('x' in args[0] && 'y' in args[0]) {
+        if (Reflect.has(args[0], 'x') && 'y' in args[0]) {
             _args.push(args[0].x, args[0].y);
         }
     }
@@ -18,4 +19,7 @@ const _circle = (...args) => {
 };
 _circle.diameter = ({ radius }) => radius * 2;
 _circle.circumstance = (circle) => _circle.diameter(circle) * Math.PI;
+_circle.area = ({ radius }) => Math.PI * Math.pow(radius, 2);
+_circle.distance = (a, b) => Point2D.distance(a, b) - (a.radius + b.radius);
 export default Object.freeze(_circle);
+//# sourceMappingURL=Circle.js.map

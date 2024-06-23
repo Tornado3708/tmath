@@ -2,3 +2,4 @@
 import { MatrixConstructor } from "tmath";
 declare const _default: MatrixConstructor;
 export default _default;
+//# sourceMappingURL=Matrix.d.ts.map

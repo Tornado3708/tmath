@@ -73,7 +73,7 @@ const _matrix = (width, height, values) => {
     };
     _matrix.row = { switch: _switch, mul, add };
 }
-_matrix.isScalar = ({ width, height }) => (width === 1 && height === 1);
+_matrix.isScalar = isScalar;
 _matrix.isVector = isVector;
 _matrix.isSquare = isSquare;
 // calculations block
@@ -162,3 +162,4 @@ function abstractMultiplication(callback) {
     };
 }
 export default Object.freeze(_matrix);
+//# sourceMappingURL=Matrix.js.map

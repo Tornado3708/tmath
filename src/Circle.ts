@@ -1,6 +1,6 @@
-import { Circle, CircleConstructor, HasRadius, HasX, HasY } from "tmath";
+import { CircleConstructor, Circle, HasRadius, HasX, HasY } from "tmath";
 import buffer from "./buffer.js";
-
+import Point2D from "./Point2D.js";
 
 
 const _circle: CircleConstructor = (...args) => {
@@ -13,10 +13,10 @@ const _circle: CircleConstructor = (...args) => {
   }
 
   const _args: number[] = [];
-  if ('radius' in (args[0] as HasRadius)) {
+  if (Reflect.has(args[0], 'radius')) {
     _args.push((args[0] as HasRadius).radius);
 
-    if ('x' in (args[0] as HasX) && 'y' in (args[0] as HasY)) {
+    if (Reflect.has(args[0], 'x') && 'y' in (args[0] as HasY)) {
       _args.push((args[0] as HasX).x, (args[0] as HasY).y);
     }
   }
@@ -27,6 +27,7 @@ const _circle: CircleConstructor = (...args) => {
 
 _circle.diameter = ({ radius }: HasRadius) => radius * 2;
 _circle.circumstance = (circle: HasRadius) => _circle.diameter(circle) * Math.PI; 
-
+_circle.area = ({ radius }) => Math.PI * Math.pow(radius, 2);
+_circle.distance = (a: Circle, b: Circle) => Point2D.distance(a, b) - (a.radius + b.radius);
 
 export default Object.freeze(_circle);
