@@ -1,19 +1,21 @@
 import buffer from "./buffer.js";
-import { DimensionConstructor, HasWidth, HasHeight, Dimension } from "tmath";
 
 
-const _dimension: DimensionConstructor = (...args) => {
-  if (typeof args[0] === 'object') {
-    return _dimension( ...(Reflect.has(args[0], 'width') && Reflect.has(args[0], 'height'))
-      ? [(args[0] as HasWidth).width, (args[0] as HasHeight).height]
-      : [0, 0]
-    );
-  } else {
-    const dimension = buffer.create('width', 'height') as Dimension;
-    [dimension.width, dimension.height] = args as [number, number];
-    return dimension;
+type DimensionParameters = [width: number, height: number] | [dimension: Dimension] | [];
+class Dimension {
+  width!: number;
+  height!: number;
+  constructor (...args: DimensionParameters) {
+    buffer.create(this, 'width', 'height');
+    switch (args.length) {
+      case 0: break;
+      case 1: if ('width' in (args[0] as HasWidth) && 'height' in (args[0] as HasHeight))
+        args = [(args[0] as HasWidth).width, (args[0] as HasHeight).height];
+      case 2:
+        [this.width, this.height] = args as [number, number];
+    } 
   }
-};
+}
 
 
-export default Object.freeze(_dimension);
+export default Dimension;

@@ -23,18 +23,17 @@ const buffer = {
     return list.get(target);
   },
   
-  create (...properties: DataKey[]) {
-    const container: Record<string, any> = {};
+  create (target: Record<string, any>, ...properties: DataKey[]) {
     
     for (const prop of properties) {
-      Object.defineProperty(container, prop, {
+      Object.defineProperty((target || (target = {})), prop, {
         get: getFactory(prop),
         set: setFactory(prop)
       });
       
     }
     
-    return container;
+    return target;
   }
 };
 
@@ -63,7 +62,7 @@ function getFactory (prop: DataKey) {
   }
 }
 
-export default Object.freeze({create: buffer.create });
+export default Object.freeze({ create: buffer.create });
 
 
  

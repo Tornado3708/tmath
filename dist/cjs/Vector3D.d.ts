@@ -1,5 +1,22 @@
-/// <reference path="../../types/tmath.d.ts" />
-import { Vector3DConstructor } from "tmath";
-declare const _default: Vector3DConstructor;
-export default _default;
+import Vector2D from "./Vector2D.js";
+type Vector3DParameters = [x: number, y: number, z: number] | [vec: Vector3D] | [];
+export default class Vector3D implements Vector2D, HasZ {
+    static mag: ({ x, y, z }: Vector3D) => number;
+    static pitch: ({ x, z }: Vector3D) => number;
+    static roll: ({ y, z }: Vector3D) => number;
+    static yaw: (vec: Vector3D) => number;
+    static add: (a: Vector3D, b: Vector3D) => Vector3D;
+    static sub: (a: Vector3D, b: Vector3D) => Vector3D;
+    static hadamard: (a: Vector3D, b: Vector3D) => Vector3D;
+    static scale: ({ x, y, z }: Vector3D, scale?: number) => void;
+    static unit: (vec: Vector3D) => void;
+    static dot: (a: Vector3D, b: Vector3D) => number;
+    static cross: (a: Vector3D, b: Vector3D) => Vector3D;
+    static toArray: ({ x, y, z }: Vector3D) => number[];
+    x: number;
+    y: number;
+    z: number;
+    constructor(...args: Vector3DParameters);
+}
+export {};
 //# sourceMappingURL=Vector3D.d.ts.map

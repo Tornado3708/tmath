@@ -13,15 +13,14 @@ const buffer = {
             throw Error(`Target doesn't have parameter [${parameter}].`);
         return list.get(target);
     },
-    create(...properties) {
-        const container = {};
+    create(target, ...properties) {
         for (const prop of properties) {
-            Object.defineProperty(container, prop, {
+            Object.defineProperty((target || (target = {})), prop, {
                 get: getFactory(prop),
                 set: setFactory(prop)
             });
         }
-        return container;
+        return target;
     }
 };
 const getterBuffer = new Map();

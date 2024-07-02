@@ -4,17 +4,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const buffer_js_1 = __importDefault(require("./buffer.js"));
-const _dimension = (...args) => {
-    if (typeof args[0] === 'object') {
-        return _dimension(...(Reflect.has(args[0], 'width') && Reflect.has(args[0], 'height'))
-            ? [args[0].width, args[0].height]
-            : [0, 0]);
+class Dimension {
+    constructor(...args) {
+        buffer_js_1.default.create(this, 'width', 'height');
+        switch (args.length) {
+            case 0: break;
+            case 1: if ('width' in args[0] && 'height' in args[0])
+                args = [args[0].width, args[0].height];
+            case 2:
+                [this.width, this.height] = args;
+        }
     }
-    else {
-        const dimension = buffer_js_1.default.create('width', 'height');
-        [dimension.width, dimension.height] = args;
-        return dimension;
-    }
-};
-exports.default = Object.freeze(_dimension);
+}
+exports.default = Dimension;
 //# sourceMappingURL=Dimension.js.map

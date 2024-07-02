@@ -4,18 +4,21 @@
   "description": "Math library.",
   "types": "./dist/cjs/index.d.ts",
   "main": "./dist/cjs/index.js",
-  "module": "dist/esm/index.js",
+  "browser": "dist/esm/index.js",
   "scripts": {
-    "build": "tsc && tsc --project tsconfig.esm.json",
-    "clear": "tsc --build --clean && tsc --build --clean tsconfig.esm.json"
+    "build": "npm run build:cjs && npm run build:esm",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "clear": "tsc --build --clean tsconfig.cjs.json && tsc --build --clean tsconfig.esm.json"
   },
+  "files": [
+    "./dist"
+  ],
   "author": "Tornado3708",
   "license": "MIT",
   "devDependencies": {
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.5"
-  },
-  "dependencies": {
+    "typescript": "^5.4.5",
     "@types/node": "^20.14.8"
   }
 }

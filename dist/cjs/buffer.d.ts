@@ -1,5 +1,5 @@
 declare const _default: Readonly<{
-    create: (...properties: DataKey[]) => Record<string, any>;
+    create: (target: Record<string, any>, ...properties: DataKey[]) => Record<string, any>;
 }>;
 export default _default;
 type Axis = 'x' | 'y' | 'z';

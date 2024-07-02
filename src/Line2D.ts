@@ -1,41 +1,41 @@
-import { Vector2D, Line2D, Line2DConstructor } from "tmath";
-import _Vector2D from "./Vector2D.js";
+import Vector2D from "./Vector2D.js";
 
 
+type Line2DParameters = [line: Line2D] | [a: Vector2D, b: Vector2D] | [x1: number, y1: number, x2: number, y2: number] | [];
 
 
+function createDescriptor () {
+  const vectors = [0, 0].map(() => new Vector2D());
+  return {
+    ['x1']: { set (x1: number) { vectors[0].x = x1 }, get () { return vectors[0].x } },
+    ['x2']: { set (x2: number) { vectors[1].x = x2 }, get () { return vectors[1].x } },
+    ['y1']: { set (y1: number) { vectors[0].y = y1 }, get () { return vectors[0].y } },
+    ['y2']: { set (y2: number) { vectors[1].y = y2 }, get () { return vectors[1].y } },
+  };
+}
 
 
+export default class Line2D {
+  x1!: number;
+  x2!: number;
+  y1!: number;
+  y2!: number;
 
-const _line2d: Line2DConstructor = (...args) => {
+  constructor (...args: Line2DParameters) {
 
-  if (!args.length) return _line2d(0, 0, 0, 0);
+    Object.defineProperties(this, createDescriptor());
 
-  const _points = typeof args[0] === 'object' ? (args as Vector2D[]).map(_Vector2D as (vec: Vector2D) => Vector2D) : [_Vector2D(args[0] as number, args[1] as number), _Vector2D(args[2] as number, args[3] as number)];
-  const instance = Object.defineProperties({}, {
-    x1: {
-      set (value: number) { _points[0].x = value; },
-      get () { return _points[0].x; },
-    },
-    x2: {
-      set (value: number) { _points[1].x = value; },
-      get () { return _points[1].x; }
-    },
-    y1: {
-      set (value: number) { _points[0].y = value; },
-      get () { return _points[0].y; }
-    },
-    y2: {
-      set (value: number) { _points[1].y = value; },
-      get () { return _points[1].y; }
+    switch (args.length) {
+      case 0: return this;
+      case 1: 
+        this.x1 = args[0].x1;
+        this.x2 = args[0].x2;
+        this.y1 = args[0].y1;
+        this.y2 = args[0].y2;
+      case 2:
+        [this.x1, this.y1] = Vector2D.toArray(args[0] as Vector2D);
+        [this.x2, this.y2] = Vector2D.toArray(args[1] as Vector2D);
+      default: [this.x1, this.y1, this.x2, this.y2] = args as [number, number, number, number];
     }
-  }) as Line2D;
-
-  [instance.x1, instance.y1, instance.x2, instance.y2] = typeof args[0] === 'object' ? (args as [Vector2D, Vector2D]).reduce((a, b) => a.concat(_Vector2D.toArray(b)), [] as number[]) : args as [number, number, number, number];
-  return instance;
-};
-
-_line2d.points = ({x1, x2, y1, y2}: Line2D) => [_Vector2D(x1, y1), _Vector2D(x2, y2)];
-_line2d.duration = (line: Line2D) => _Vector2D.mag(_Vector2D.sub(..._line2d.points(line)));
-
-export default Object.freeze(_line2d);
+  }
+}

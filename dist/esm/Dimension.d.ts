@@ -1,5 +1,8 @@
-/// <reference path="../../types/tmath.d.ts" />
-import { DimensionConstructor } from "tmath";
-declare const _default: DimensionConstructor;
-export default _default;
+type DimensionParameters = [width: number, height: number] | [dimension: Dimension] | [];
+declare class Dimension {
+    width: number;
+    height: number;
+    constructor(...args: DimensionParameters);
+}
+export default Dimension;
 //# sourceMappingURL=Dimension.d.ts.map

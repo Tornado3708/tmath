@@ -1,165 +1,185 @@
-import { MatrixConstructor, Matrix, Dimension } from "tmath";
+import Dimension from "./Dimension.js";
 import buffer from "./buffer.js";
 
-/**
- * Creates instance of Matrix.
- * {@link ./../dev.md dev}.
- * @param {number}width 
- * @param {number} height 
- * @param {number[]} values 
- * @returns {Matrix}
-*/
-const _matrix: MatrixConstructor = (width: number, height: number, values: number[]): Matrix => {
-  if (width * height !== values.length) throw Error('Wrong size of matrix.');
-  
-  const matrix = buffer.create('width', 'height', 'values') as unknown as Matrix;
-  
-  matrix.width = width;
-  matrix.height = height;
-  matrix.values = values;
-  
-  return matrix as unknown as Matrix;
-};
-  
-  
-  // extract block
-{
-  const at: MatrixConstructor['at'] = (x, y, {width, values}) => values[x + y * width] || 0;
-  const submatrix: MatrixConstructor['submatrix'] = (x: number, y: number, matrix: Matrix): Matrix => {
-    if (!matrix.values.length) return _matrix(0, 0, []);
-    
-    const values: number[] = [];
-    
-    for (let i = 0; i < matrix.height; i++) {
-      if (i === y) continue;
-        
-      for (let j = 0; j < matrix.width; j++) {
-        if (j !== x) values.push(_matrix.at(j, i, matrix));
-      }
-    }
-    return _matrix(--matrix.width, --matrix.height, values);
-  };
-          
-  _matrix.at = at;
-  _matrix.submatrix = submatrix;
-  _matrix.transpose = transpose;
-}
+const wrongSizeDefinition = () => {throw Error('Wrong size definition.')};
 
 
-// row operations block
-{
-  const _switch: MatrixConstructor['row']['switch'] = (rows: [number, number], {width, height, values}: Matrix) => {
-    if (rows.filter(index => index >= height).length) throw Error ('Row is too high');
 
-    const newValues: number[] = values;
-    const first = rows.map((row) => row * width);
+type MatrixParameters = [width: number, height: number, values: number[]] | [dimension: Dimension, values: number[]];
+export default class Matrix implements Dimension, HasValues {
 
-    for (let i = 0; i < width; i++) {
-      [values[first[0] + i], values[first[1] + i]] = [values[first[1] + i], values[first[0] + i]];
-    }
-    
-    return _matrix(width, height, newValues);
-  };
+  static add      :ReturnType<typeof abstractAddition>;
+  static sub      :ReturnType<typeof abstractAddition>;
+  static hadamard :ReturnType<typeof abstractAddition>;
+  static mul      :ReturnType<typeof abstractMultiplication>;
+  static div      :ReturnType<typeof abstractMultiplication>;
 
+  static {
+    const mul = (a: number, b: number) => a * b;
+    const div = (a: number, b: number) => 1 / b * a;
 
-  const mul: MatrixConstructor['row']['mul'] = (row: number, k: number, {width, height, values}: Matrix) => {
-    if (!k) throw Error("Can't multiply by 0.");
-    
-    const newValues: number[] = values;
-    const first = row * width;
-    
-    for (let i = 0; i < width; i++) {
-      newValues[i + first] = newValues[i + first] * k;
-    }
-
-    return _matrix(width, height, newValues);
-  };
-  
-  const add: MatrixConstructor['row']['add'] = (firstRow: number, secondRow: number, k: number, matrix: Matrix) => {
-    if (firstRow === secondRow) throw Error('Can\'t multiply row by itself');
-
-    matrix = mul(secondRow, k, matrix);
-
-    const newValues = matrix.values;
-    const first = matrix.width * firstRow;
-    const second = matrix.width * secondRow;
-
-    for (let i = 0; i < matrix.width; i++) {
-      newValues[first + i] += newValues[second + i];
-    }
-
-    return _matrix(matrix.width, matrix.height, newValues);
+    this.add      = abstractAddition((a: number, b: number) => a + b);
+    this.sub      = abstractAddition((a: number, b: number) => a - b);
+    this.mul      = abstractMultiplication(mul);
+    this.div      = abstractMultiplication(div);
+    this.hadamard = abstractAddition(mul);
   }
-  
-  
-  _matrix.row = { switch: _switch, mul, add };
 
+
+  static trace = trace;
+  static det   = det;
+  static minor = minor;
+
+
+  static at = at;
+  static submatrix = submatrix;
+  static transpose = transpose;
+
+  static isScalar = isScalar;
+  static isVector = isVector;
+  static isSquare = isSquare;
+
+  static row = {
+    add: rowAdd,
+    mul: rowMul,
+    switch: rowSwitch
+  };
+
+  width!  :number;
+  height! :number;
+  values! :number[];
+
+  constructor (...args: MatrixParameters) {
+    buffer.create(this, 'width', `height`, 'values');
+
+    switch (args.length) {
+      case 2: args[0].width * args[0].height === args[1].length
+        ? [this.width, this.height, this.values] = [args[0].width, args[0].height, args[1]]
+        : wrongSizeDefinition();
+        break;
+      case 3:
+        case 2: (args[0] as number) * (args[1] as number) === (args[2] as number[]).length
+        ? [this.width, this.height, this.values] = [args[0] as number, args[1] as number, args[2] as number[]]
+        : wrongSizeDefinition();
+        break;
+      default: throw Error(`Wrong costructor parameters:[${(args as any[]).map((value: any) => typeof value)} instead of [number, number, number[]] | [{width, height}, number[]]`);
+    };
+    ((plug = {set(){}}) => Object.defineProperties (this, { width: plug, height: plug, values: plug }))();
+  }
+}
+
+
+  // extract block
+function at (x: number, y: number, {width, height, values}: Matrix) {
+  return (x < width && y < height) ? values[x + y * width] : 0;
 }
 
 
 
-_matrix.isScalar = isScalar;
-_matrix.isVector = isVector;
-_matrix.isSquare = isSquare;
+function submatrix (x: number, y: number, matrix: Matrix) {
+  const values: number[] = [];
+
+  for (let i = 0; i < matrix.height; i++) if (i !== y) 
+    for (let j = 0; j < matrix.width;  j++) if (j !== x) 
+      values.push(at(i, j, matrix));
+
+  return new Matrix (matrix.width - 1, matrix.height - 1, values);
+};
 
 
-// calculations block
-{
-  const add = (a: number, b: number) => a + b;
-  const sub = (a: number, b: number) => a - b;
-  const mul = (a: number, b: number) => a * b;
-  const div = (a: number, b: number) => 1 / b * a;
 
-  _matrix.add = abstractAddition(add);
-  _matrix.sub = abstractAddition(sub);
-  _matrix.mul = abstractMultiplication(mul);
-  _matrix.div = abstractMultiplication(div);
-  _matrix.hadamard = abstractAddition(mul);
+function transpose (matrix: Matrix) {
+  if (isVector(matrix)) return new Matrix(matrix.height, matrix.width, matrix.values);
+  
+  const values: number[] = [];
+
+  for (let i = 0; i < matrix.height; i++)
+    for (let j = 0; j < matrix.width; j++)
+      values.push(at(j, i, matrix));
+
+  return new Matrix(matrix.height, matrix.width, values);
 }
 
-_matrix.trace = trace;
+function rowSwitch (rows: [number, number], {width, height, values}: Matrix) {
+  if (rows[0] >= height || rows[1] >= height) throw Error(`Row "${Math.max(...rows)}" doesn't exist.`);
+
+  const lines: number[][] = [];
+  for (let i = 0; i < height; i++) {
+    values.slice(i * width, i * width + width);
+  }
+  [lines[rows[0]], lines[rows[1]]] = [lines[rows[1]], lines[rows[0]]];
+
+  return new Matrix(width, height, lines.reduce((a, b) => {a.push(...b); return a}, []));
+}
+
+
+
+function rowMul (row: number, k: number, matrix: Matrix) {
+  if (!+k) throw Error('Can\'t multiply by 0.');
+
+  const values: number[] = matrix.values;
+  const first = row * matrix.width;
+
+  for (let i = 0; i < matrix.width; i++)
+    values[i + first] *= k;
+
+  return new Matrix(matrix.width, matrix.height, values);
+}
+
+
+
+function rowAdd (rows: [number, number], k: number, matrix: Matrix) {
+  if (rows[0] === rows[1]) throw Error('Can\'t multiply row by intself');
+
+  matrix = rowMul(rows[1], k, matrix);
+
+  const values = matrix.values;
+  const start = rows.map(row => row * matrix.width);
+
+  for (let i = 0; i < matrix.width; i++)
+    values[start[0] + i] += values[start[1] + i];
+
+  return new Matrix(matrix.width, matrix.height, values);
+}
+
+
+
 
 function trace (matrix: Matrix) {
   if (!isSquare(matrix)) throw Error ('Matrix is not square');
 
   let sum = 0;
-  
-  for (let i = 0; i < matrix.width; i++) {
-    sum += _matrix.at(i, i, matrix);
-  }
+
+  for (let i = 0; i < matrix.width; i++) 
+    sum += at(i, i, matrix);
 
   return sum;
 }
 
-/**
- * TODO
- * @param matrix 
- * @returns 
- */
-_matrix.det = (matrix: Matrix) => 0;
+function det (matrix: Matrix) {
+  if (!isSquare(matrix)) throw Error("Matrix is not square");
 
-/**
- * TODO
- * @param matrix 
- * @param x 
- * @param y 
- * @returns 
- */
-_matrix.minor = (x: number, y: number, matrix: Matrix) => 0;
+  const { values, width } = matrix;
 
-function transpose ({ width, height, values }: Matrix) {
-  if (isVector({ width, height }))
-    return _matrix (height, width, values);
-
-  const newValues: number[] = [];
-  
-  for (let i = 0; i < width; i++) {
-    for (let j = 0; j < height; j++) {
-      newValues.push(values[i + j * width]);
-    }
+  switch (width) {
+    case 0: return 0;
+    case 1: return values[0];
+    case 2: return values[0] * values[3] - values[1] * values[2];
   }
-  return _matrix(height, width, newValues);
+  
+  let sum = 0;
+
+  for (let i = 0; i < width; i++) 
+    sum += values[i] * det(submatrix(i, 0, matrix)) * (i % 2 ? -1 : 1);  
+
+  return sum;
 }
+
+
+function minor (x: number, y: number, matrix: Matrix) {
+  return det(submatrix(x, y, matrix));
+};
+
 
 function isScalar ({width, height}: Dimension) { return width === 1 && height === 1; };
 function isVector ({width, height}: Dimension) { return width === 1 || height === 1; };
@@ -168,7 +188,7 @@ function isSquare ({width, height}: Dimension) { return width === height; };
 function abstractAddition (callback: (a: number, b: number) => number) {
   return function (a: Matrix, b: Matrix | number) {
 
-    if (typeof b === 'number') return _matrix(a.width, a.height, a.values.map((value: number) => callback(value, b)));
+    if (typeof b === 'number') return new Matrix(a.width, a.height, a.values.map((value: number) => callback(value, b)));
 
     if (a.width !== b.width || a.height !== b.height) throw Error('Size of matrices is not same.');
 
@@ -176,16 +196,16 @@ function abstractAddition (callback: (a: number, b: number) => number) {
 
     for (let i = 0; i < a.height; i++) {
       for (let j = 0; j < a.width; j++) {
-        values.push(callback(_matrix.at(j, i, a), _matrix.at(j ,i, b)));
+        values.push(callback(at(j, i, a), at(j ,i, b)));
       }
     }
-    return _matrix(a.width, a.height, values);
+    return new Matrix(a.width, a.height, values);
   }
 }
 
 function abstractMultiplication (callback: (a: number, b: number) => number) {
   return function (a: Matrix, b: Matrix | number) {
-    if (typeof b === 'number') return _matrix(a.width, a.height, a.values.map((value: number) => callback(value, b)));
+    if (typeof b === 'number') return new Matrix(a.width, a.height, a.values.map((value: number) => callback(value, b)));
     
     if (a.width !== b.height)
       throw Error('Width of matrix [a] should be equals to height of matrix [b].');
@@ -195,16 +215,18 @@ function abstractMultiplication (callback: (a: number, b: number) => number) {
     for (let i = 0; i < a.height; i++) {
       for (let j = 0; j < b.width; j++) {
         for (let k = 0; k < a.width; k++) {
-          values.push(callback(_matrix.at(k, i, a), _matrix.at(j, k, b)));
+          values.push(callback(at(k, i, a), at(j, k, b)));
         }
       }
     }
 
-    return _matrix(b.width, a.height, values);
+    return new Matrix(b.width, a.height, values);
   }
 }
 
-export default Object.freeze(_matrix);
+
+
+Object.freeze(Matrix);
 
 
 
