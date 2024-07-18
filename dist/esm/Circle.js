@@ -30,4 +30,3 @@ function area({ radius }) {
     return Math.pow(radius, 2) * Math.PI;
 }
 Object.freeze(Circle);
-//# sourceMappingURL=Circle.js.map

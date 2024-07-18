@@ -1,5 +1,5 @@
+import { HasZ } from "tmath";
 import Vector2D from "./Vector2D.js";
-type Vector3DParameters = [x: number, y: number, z: number] | [vec: Vector3D] | [];
 export default class Vector3D implements Vector2D, HasZ {
     static mag: ({ x, y, z }: Vector3D) => number;
     static pitch: ({ x, z }: Vector3D) => number;
@@ -18,5 +18,8 @@ export default class Vector3D implements Vector2D, HasZ {
     z: number;
     constructor(...args: Vector3DParameters);
 }
+type Vector3DParameters = [x: number, y: number, z: number] | [vec: Vector3D] | [];
+declare module 'tmath' {
+    const Vector3D: Vector3D;
+}
 export {};
-//# sourceMappingURL=Vector3D.d.ts.map

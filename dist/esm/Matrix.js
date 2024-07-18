@@ -164,4 +164,3 @@ function abstractMultiplication(callback) {
     };
 }
 Object.freeze(Matrix);
-//# sourceMappingURL=Matrix.js.map

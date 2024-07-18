@@ -1,7 +1,10 @@
+import { HasZ } from "tmath";
 import Vector2D from "./Vector2D.js";
 import buffer from "./buffer.js";
 
-type Vector3DParameters = [x: number, y: number, z: number] | [vec: Vector3D] | [];
+
+
+
 
 export default class Vector3D implements Vector2D, HasZ {
   static mag = ({x, y, z}: Vector3D) => Math.hypot(x, y, z);
@@ -48,14 +51,22 @@ export default class Vector3D implements Vector2D, HasZ {
   constructor (...args: Vector3DParameters) {
     buffer.create(this, 'x', 'y', 'z');
 
+    [this.x, this.y, this.z] = [0, 0, 0];
 
     switch (args.length) {
       case 0: return this;
+        break;
       case 1:
         if (args[0] && 'x' in args[0] && 'y' in args[0] && 'z' in args[0]) {
           [this.x, this.y, this.z] = [args[0].x, args[0].y, args[0].z];
         }
+        break;
       default: [this.x, this.y, this.z] = args as [number, number, number];
     }
   }
 }
+
+
+
+type Vector3DParameters = [x: number, y: number, z: number] | [vec: Vector3D] | [];
+declare module 'tmath' {  export const Vector3D: Vector3D;  }

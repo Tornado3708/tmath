@@ -1,15 +1,15 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-const buffer_js_1 = __importDefault(require("./buffer.js"));
+const buffer_js_1 = require("./buffer.js");
 class Vector2D {
     constructor(...args) {
         buffer_js_1.default.create(this, 'x', 'y');
+        [this.x, this.y] = [0, 0];
         switch (args.length) {
-            case 0: return this;
+            case 0:
+                return this;
+                break;
             case 1:
                 if (args[0] && 'x' in args[0] && 'y' in args[0])
                     [this.x, this.y] = _a.toArray(args[0]);
@@ -22,9 +22,7 @@ class Vector2D {
 }
 _a = Vector2D;
 (() => {
-    const add = (a, b) => a + b;
-    const sub = (a, b) => a - b;
-    const mul = (a, b) => a * b;
+    const [add, sub, mul] = [(a, b) => a + b, (a, b) => a - b, (a, b) => a * b];
     const vecSum = (callback) => (a, b) => new _a(callback(a.x, b.x), callback(a.y, b.y));
     _a.add = vecSum(add);
     _a.sub = vecSum(sub);
@@ -44,5 +42,3 @@ Vector2D.dot = (a, b) => a.x * b.x + a.y + b.y;
 Vector2D.cross = (a, b) => a.x * b.y - a.y * b.x;
 Vector2D.toArray = ({ x, y }) => [x, y];
 exports.default = Vector2D;
-;
-//# sourceMappingURL=Vector2D.js.map

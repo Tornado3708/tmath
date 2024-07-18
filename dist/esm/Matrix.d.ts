@@ -1,3 +1,4 @@
+import { HasValues } from "tmath";
 import Dimension from "./Dimension.js";
 type MatrixParameters = [width: number, height: number, values: number[]] | [dimension: Dimension, values: number[]];
 export default class Matrix implements Dimension, HasValues {
@@ -40,4 +41,3 @@ declare function isSquare({ width, height }: Dimension): boolean;
 declare function abstractAddition(callback: (a: number, b: number) => number): (a: Matrix, b: Matrix | number) => Matrix;
 declare function abstractMultiplication(callback: (a: number, b: number) => number): (a: Matrix, b: Matrix | number) => Matrix;
 export {};
-//# sourceMappingURL=Matrix.d.ts.map

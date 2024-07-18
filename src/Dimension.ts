@@ -1,3 +1,4 @@
+import { HasWidth, HasHeight } from "tmath";
 import buffer from "./buffer.js";
 
 

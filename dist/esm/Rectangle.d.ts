@@ -1,5 +1,7 @@
 import Vector2D from "./Vector2D.js";
 import Dimension from "./Dimension.js";
+import { HasX } from "tmath";
+import { HasWidth, HasY, HasHeight } from "tmath";
 type RectangleParameters = [width: number, y: number] | [x: number, y: number, width: number, height: number] | [dimension: Dimension] | [rect: Rectangle] | [vec: Vector2D, dimension: Dimension] | [];
 declare class Rectangle {
     static opposite: Readonly<{
@@ -18,4 +20,3 @@ declare class Rectangle {
     constructor(...args: RectangleParameters);
 }
 export default Rectangle;
-//# sourceMappingURL=Rectangle.d.ts.map

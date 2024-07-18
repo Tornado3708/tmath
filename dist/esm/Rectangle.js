@@ -24,4 +24,3 @@ Rectangle.center = Object.freeze({
 });
 Rectangle.area = ({ width, height }) => width * height;
 export default Rectangle;
-//# sourceMappingURL=Rectangle.js.map

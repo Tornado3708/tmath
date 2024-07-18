@@ -1,4 +1,7 @@
-dev.md
 node_modules
-tsconfig.cjs.json
-tsconfig.esm.json
+dist
+src
+*.log
+.git
+.github
+config

@@ -1,3 +1,4 @@
+import { HasValues } from "tmath";
 import Dimension from "./Dimension.js";
 import buffer from "./buffer.js";
 

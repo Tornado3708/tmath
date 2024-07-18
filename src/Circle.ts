@@ -1,3 +1,4 @@
+import { HasRadius } from "tmath";
 import buffer from "./buffer.js";
 import Vector2D from "./Vector2D.js";
 

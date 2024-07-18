@@ -1,20 +1,21 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2D_js_1 = __importDefault(require("./Vector2D.js"));
-const buffer_js_1 = __importDefault(require("./buffer.js"));
+const Vector2D_js_1 = require("./Vector2D.js");
+const buffer_js_1 = require("./buffer.js");
 class Vector3D {
     constructor(...args) {
         buffer_js_1.default.create(this, 'x', 'y', 'z');
+        [this.x, this.y, this.z] = [0, 0, 0];
         switch (args.length) {
-            case 0: return this;
+            case 0:
+                return this;
+                break;
             case 1:
                 if (args[0] && 'x' in args[0] && 'y' in args[0] && 'z' in args[0]) {
                     [this.x, this.y, this.z] = [args[0].x, args[0].y, args[0].z];
                 }
+                break;
             default: [this.x, this.y, this.z] = args;
         }
     }
@@ -46,4 +47,3 @@ Vector3D.dot = (a, b) => Vector2D_js_1.default.dot(a, b) + a.z * b.z;
 Vector3D.cross = (a, b) => new _a(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, Vector2D_js_1.default.cross(a, b));
 Vector3D.toArray = ({ x, y, z }) => [x, y, z];
 exports.default = Vector3D;
-//# sourceMappingURL=Vector3D.js.map

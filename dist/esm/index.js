@@ -14,4 +14,3 @@ export const Circle = _Circle;
 export const Rectangle = _Rectangle;
 export const Dimension = _Dimension;
 export const Matrix = _Matrix;
-//# sourceMappingURL=index.js.map

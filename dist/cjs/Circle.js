@@ -1,10 +1,7 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const buffer_js_1 = __importDefault(require("./buffer.js"));
-const Vector2D_js_1 = __importDefault(require("./Vector2D.js"));
+const buffer_js_1 = require("./buffer.js");
+const Vector2D_js_1 = require("./Vector2D.js");
 class Circle {
     constructor(...args) {
         buffer_js_1.default.create(this, 'x', 'y', 'radius');
@@ -36,4 +33,3 @@ function area({ radius }) {
     return Math.pow(radius, 2) * Math.PI;
 }
 Object.freeze(Circle);
-//# sourceMappingURL=Circle.js.map

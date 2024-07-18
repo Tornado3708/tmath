@@ -5,4 +5,3 @@ declare class Dimension {
     constructor(...args: DimensionParameters);
 }
 export default Dimension;
-//# sourceMappingURL=Dimension.d.ts.map

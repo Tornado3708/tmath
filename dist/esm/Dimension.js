@@ -12,4 +12,3 @@ class Dimension {
     }
 }
 export default Dimension;
-//# sourceMappingURL=Dimension.js.map

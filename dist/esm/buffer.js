@@ -17,7 +17,8 @@ const buffer = {
         for (const prop of properties) {
             Object.defineProperty((target || (target = {})), prop, {
                 get: getFactory(prop),
-                set: setFactory(prop)
+                set: setFactory(prop),
+                enumerable: true
             });
         }
         return target;
@@ -73,4 +74,3 @@ function createSlopeSetter(prop) {
     })).get(prop);
 }
 // types region end
-//# sourceMappingURL=buffer.js.map

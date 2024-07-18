@@ -6,4 +6,3 @@ type Axis = 'x' | 'y' | 'z';
 type Slopes = 'roll' | 'pitch' | 'yaw';
 type Dimensions = 'width' | 'height';
 type DataKey = Axis | Slopes | Dimensions | 'radius' | 'values';
-//# sourceMappingURL=buffer.d.ts.map

@@ -4,12 +4,16 @@ import buffer from "./buffer.js";
 class Vector3D {
     constructor(...args) {
         buffer.create(this, 'x', 'y', 'z');
+        [this.x, this.y, this.z] = [0, 0, 0];
         switch (args.length) {
-            case 0: return this;
+            case 0:
+                return this;
+                break;
             case 1:
                 if (args[0] && 'x' in args[0] && 'y' in args[0] && 'z' in args[0]) {
                     [this.x, this.y, this.z] = [args[0].x, args[0].y, args[0].z];
                 }
+                break;
             default: [this.x, this.y, this.z] = args;
         }
     }
@@ -41,4 +45,3 @@ Vector3D.dot = (a, b) => Vector2D.dot(a, b) + a.z * b.z;
 Vector3D.cross = (a, b) => new _a(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, Vector2D.cross(a, b));
 Vector3D.toArray = ({ x, y, z }) => [x, y, z];
 export default Vector3D;
-//# sourceMappingURL=Vector3D.js.map
