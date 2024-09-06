@@ -7,10 +7,6 @@ import _Dimension from "./Dimension.js";
 import _Matrix from "./Matrix.js";
 export declare const Vector2D: typeof _Vector2D;
 export declare const Vector3D: typeof _Vector3D;
-export declare const Point2D: {
-    (...args: ConstructorParameters<typeof _Vector2D>): _Vector2D;
-    distance(a: _Vector2D, b: _Vector2D): number;
-};
 export declare const Line2D: typeof _Line2D;
 export declare const Circle: typeof _Circle;
 export declare const Rectangle: typeof _Rectangle;

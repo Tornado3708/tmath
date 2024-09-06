@@ -4,14 +4,15 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./Vector2D.js"], factory);
+        define(["require", "exports", "../Rectangle.js"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    const Vector2D_js_1 = require("./Vector2D.js");
-    //TODO Зробити клас
-    const p2d = (...args) => new Vector2D_js_1.default(...args);
-    p2d.distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
-    exports.default = Object.freeze(p2d);
+    const Rectangle_js_1 = require("../Rectangle.js");
+    let rect;
+    rect = new Rectangle_js_1.default();
+    rect = new Rectangle_js_1.default(1, 2);
+    rect = new Rectangle_js_1.default(1, 2, 3, 4);
+    exports.default = {};
 });

@@ -9,7 +9,7 @@ export const test = (description) => (equation) => (a) => (b) => {
     }));
 };
 export const finish = () => {
-    list.forEach(promise => promise
-        .then((message) => console.log(`\x1b[32mTest [${message}] passed.`))
-        .catch((message) => console.log(`\x1b[31mTest [${message}] failed.`)));
+    list.forEach((promise, i) => promise
+        .then((message) => console.log(`\x1b[32mTest ${i + 1} [${message}] passed.`))
+        .catch((message) => console.log(`\x1b[31mTest ${i + 1} [${message}] failed.`)));
 };

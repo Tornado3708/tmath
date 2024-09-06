@@ -1,22 +1,25 @@
-import Vector2D from "./Vector2D.js";
 import Dimension from "./Dimension.js";
-import { HasX } from "tmath";
-import { HasWidth, HasY, HasHeight } from "tmath";
-type RectangleParameters = [width: number, y: number] | [x: number, y: number, width: number, height: number] | [dimension: Dimension] | [rect: Rectangle] | [vec: Vector2D, dimension: Dimension] | [];
 declare class Rectangle {
     static opposite: Readonly<{
-        x: ({ x, width }: HasX & HasWidth) => number;
-        y: ({ y, height }: HasY & HasHeight) => number;
+        x: ({ x, width }: Rectangle) => number;
+        y: ({ y, height }: Rectangle) => number;
     }>;
     static center: Readonly<{
-        x: ({ x, width }: HasX & HasWidth) => number;
-        y: ({ y, height }: HasY & HasHeight) => number;
+        x: ({ x, width }: Rectangle) => number;
+        y: ({ y, height }: Rectangle) => number;
     }>;
-    static area: ({ width, height }: Dimension) => number;
+    constructor();
+    constructor(width: number, height: number);
+    constructor(x: number, y: number, width: number, height: number);
+    constructor(dimension: Dimension);
+    constructor(rect: Rectangle);
+    constructor(pos: Point2D, dimension: Dimension);
+}
+export default Rectangle;
+interface Rectangle extends Shape {
     x: number;
     y: number;
     width: number;
     height: number;
-    constructor(...args: RectangleParameters);
+    prototype: Rectangle;
 }
-export default Rectangle;

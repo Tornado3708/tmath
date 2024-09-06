@@ -1,26 +1,36 @@
-import { HasX, HasY } from "tmath";
-export default class Vector2D implements HasX, HasY {
-    static add: (a: Vector2D, b: Vector2D) => Vector2D;
-    static sub: (a: Vector2D, b: Vector2D) => Vector2D;
-    static hadamard: (a: Vector2D, b: Vector2D) => Vector2D;
-    static mag: ({ x, y }: Vector2D) => number;
-    static yaw: ({ x, y }: Vector2D) => number;
-    static scale: ({ x, y }: Vector2D, scale?: number) => Vector2D;
-    static dot: (a: Vector2D, b: Vector2D) => number;
-    static cross: (a: Vector2D, b: Vector2D) => number;
-    static toArray: ({ x, y }: Vector2D) => number[];
+declare class Vector2D {
+    static add: (a: Point2D, b: Point2D) => Vector2D;
+    static sub: (a: Point2D, b: Point2D) => Vector2D;
+    static hadamard: (a: Point2D, b: Point2D) => Vector2D;
+    static mag: ({ x, y }: Point2D) => number;
+    static yaw: ({ x, y }: Point2D) => number;
+    static scale: ({ x, y }: Point2D, scale?: number) => Vector2D;
+    static unit: (vec: Point2D) => Vector2D;
+    static dot: (a: Point2D, b: Point2D) => number;
+    static cross: (a: Point2D, b: Point2D) => number;
+    static toArray: ({ x, y }: Point2D) => [number, number];
+    constructor();
+    constructor(x: number, y: number);
+    constructor(vec: Point2D);
+}
+export default Vector2D;
+interface Vector2D extends Point2D {
+    add(vec: Point2D): Vector2D;
+    sub(vec: Point2D): Vector2D;
+    hadamard(vec: Point2D): Vector2D;
+    yaw(): number;
+    mag(): number;
+    scale(scale: number): Vector2D;
+    unit(): Vector2D;
+    dot(vec: Point2D): number;
+    cross(vec: Point2D): number;
+    toArray(): [number, number];
+    prototype: Vector2D;
+}
+type Point2D = {
     x: number;
     y: number;
-    constructor(...args: Vector2DParameters);
-}
-type Vector2DParameters = [x: number, y: number] | [vec: Vector2D] | [];
-type Vector2DConstructor = {
-    new (...args: Vector2DParameters): Vector2D;
-    add(a: Vector2D, b: Vector2D): Vector2D;
-    sub(a: Vector2D, b: Vector2D): Vector2D;
-    hadamard(a: Vector2D, b: Vector2D): Vector2D;
 };
 declare module 'tmath' {
-    const Vector2D: Vector2DConstructor;
+    const Vector2D: Vector2D;
 }
-export {};
