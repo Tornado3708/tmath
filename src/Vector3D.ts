@@ -1,94 +1,154 @@
-import Vector2D from "./Vector2D.js";
-
-const 
-  __x__ = new WeakMap() as WeakMap<Vector3D, number>,
-  __y__ = new WeakMap() as WeakMap<Vector3D, number>,
-  __z__ = new WeakMap() as WeakMap<Vector3D, number>;
+import { HasPoint3D } from "./types.js";
+import Vector2D from "./Vector2D";
+import { x, y, z } from "./buffers";
 
 
 
 class Vector3D {
-  static mag = ({x, y, z}: Point3D) => Math.hypot(x, y, z);
-  static pitch = ({x, z}: Point3D) => Math.atan2(x, z);
-  static roll = ({y, z}: Point3D) => Math.atan2(z, y);
-  static yaw = Vector2D.yaw as (vec: Point3D) => number;
+  static mag   : (vec: HasPoint3D) => number;
+  static pitch : (vec: HasPoint3D) => number;
+  static roll  : (vec: HasPoint3D) => number;
+  static yaw   : (vec: HasPoint3D) => number;
 
   
-  static add      = (a: Point3D, b: Point3D) => new Vector3D(a.x + b.x, a.y + b.y, a.z + b.z);
-  static sub      = (a: Point3D, b: Point3D) => new Vector3D(a.x - b.x, a.y - b.y, a.z - b.z);
-  static hadamard = (a: Point3D, b: Point3D) => new Vector3D(a.x * b.x, a.y * b.y, a.z * b.z);
+  static add      : (a: HasPoint3D, b: HasPoint3D) => Vector3D;
+  static sub      : (a: HasPoint3D, b: HasPoint3D) => Vector3D;
+  static hadamard : (a: HasPoint3D, b: HasPoint3D) => Vector3D;
 
 
-  static scale = ({x, y ,z}: Point3D, scale = 1) => {
-    switch (scale) {
-      case  0: return new Vector3D();
-      case  1: return new Vector3D(x, y, z);
-      case -1: return new Vector3D(-x, -y, -z);
-      default: return new Vector3D(x * scale, y * scale, z * scale);
-    }
-  }
-  static unit  = (vec: Point3D) => this.scale(vec, 1 / this.mag(vec));
+  static scale : (vec: HasPoint3D, scale?: number) => Vector3D;
+  static unit  : (vec: HasPoint3D) => Vector3D;
 
-  static dot   = (a: Point3D, b: Point3D) => Vector2D.dot(a, b) + a.z * b.z;
-  static cross = (a: Point3D, b: Point3D) => new Vector3D(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, Vector2D.cross(a, b));
-
-  static toArray = ({x, y, z}: Point3D) => [x, y, z];
+  static dot   = (a: HasPoint3D, b: HasPoint3D) => Vector2D.dot(a, b) + a.z * b.z;
+  static cross = (a: HasPoint3D, b: HasPoint3D) => new Vector3D(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, Vector2D.cross(a, b));
 
   constructor ();
   constructor (x: number, y: number, z: number);
-  constructor (vec: Point3D);
+  constructor (vec: HasPoint3D);
   constructor (...args: any[]) {
-    this.x = args[0]?.x || args[0];
-    this.y = args[0]?.y || args[1];
-    this.z = args[0]?.z || args[2];
+      x.set(this, 0);
+      y.set(this, 0);
+      z.set(this, 0); 
+      
+      if(args.length === 1) {
+        if (typeof args[0] !== 'object' || !args[0]) {
+          return this
+        }
+
+        this.x = args[0].x;
+        this.y = args[0].y;
+        this.z = args[0].z;
+      }
+      else {
+        [this.x, this.y, this.z] = args;
+      }
   }
 }
 
 
 {
-  const descriptor = (buffer: WeakMap<Vector3D, number>) => ({
-    set (this: Vector3D, value: number) { buffer.set(this, +value || 0) },
-    get (this: Vector3D)                { return buffer.get(this) || 0 }
-  });
+  const 
+    defaultDescriptor: PropertyDescriptor = { configurable: !1, enumerable: !1 },
+    enumerable       : PropertyDescriptor = { configurable: !1, enumerable: !1 }; 
+  
+  const describeAccessor = (buffer: WeakMap<Vector3D, number>, descriptor = defaultDescriptor) => {
+    return Object.assign({
+      set (this: Vector3D, value: number) { buffer.set(this, +value || 0) },
+      get (this: Vector3D)                { return buffer.get(this) || 0 }
+  }, descriptor)};
+
+  const describeValue = <T>(value: T, descriptor = defaultDescriptor) => ( { ...descriptor, value } );
+
+  function add (this: HasPoint3D , vec: HasPoint3D) {
+    return new Vector3D(this.x + vec.x, this.y + vec.y, this.z + vec.z);
+  }
+
+  function sub (this: HasPoint3D, vec: HasPoint3D) {
+    return new Vector3D(this.x - vec.x, this.y - vec.x, this.z - vec.z);
+  }
+
+  function hadamard (this: HasPoint3D, vec: HasPoint3D) {
+    return new Vector3D(this.x * vec.x, this.y * vec.y, this.z * vec.z);
+  }
+
+  function scale (this: HasPoint3D, scale = 1) {
+    return new Vector3D(this.x * scale, this.y * scale, this.z * scale);
+  }
+
+  function unit (this: HasPoint3D) {
+    return scale.call(this, 1 / Math.hypot(this.x, this.y, this.z));
+  }
+
+  function mag (this: HasPoint3D) {
+    return Math.hypot(this.x, this.y, this.z) || 0;
+  }
+
+  function roll (this: HasPoint3D) {
+    return Math.atan2(this.y, Math.hypot(this.x, this.z));
+  }
+
+  function pitch (this: HasPoint3D) {
+    return Math.atan2(this.x, Math.hypot(this.y, this.z))
+  }
+
+  function dot (this: HasPoint3D, vec: HasPoint3D) {
+    return this.x * vec.x + this.y * vec.y + vec.z * vec.z;
+  }
+
+  function cross (this: HasPoint3D, vec: HasPoint3D) {
+    return new Vector3D(this.x * vec.y - this.y * vec.x, this.z * vec.x - this.x * vec.z, Vector2D.cross(this, vec));
+  }
+
 
   Object.defineProperties(Vector3D.prototype, {
-    x: descriptor(__x__),
-    y: descriptor(__y__),
-    z: descriptor(__z__)
-  });
-}
+    x: describeAccessor(x, enumerable),
+    y: describeAccessor(y, enumerable),
+    z: describeAccessor(z, enumerable),
+    add      : describeValue(add),
+    sub      : describeValue(sub),
+    hadamard : describeValue(hadamard),
+    scale    : describeValue(scale),
+    unit     : describeValue(unit),
+    mag      : describeValue(mag),
+    roll     : describeValue(roll),
+    pitch    : describeValue(pitch),
+    yaw      : Object.getOwnPropertyDescriptor(Vector2D.prototype, 'yaw') as PropertyDescriptor,
+    dot      : describeValue(dot),
+    cross    : describeValue(cross)
+  }); 
 
+  Object.defineProperties(Vector3D, {
+    add      : describeValue((a: HasPoint3D, b: HasPoint3D) => add.call(a, b)),
+    sub      : describeValue((a: HasPoint3D, b: HasPoint3D) => sub.call(a, b)),
+    hadamard : describeValue((a: HasPoint3D, b: HasPoint3D) => hadamard.call(a, b)),
+    scale    : describeValue((vec: HasPoint3D, _scale = 1) => scale.call(vec, _scale)),
+    mag      : describeValue(({x, y, z}: HasPoint3D) => Math.hypot(x, y, z) || 0),
+    unit     : describeValue((vec: HasPoint3D) => unit.call(vec)),
+    roll     : describeValue((vec: HasPoint3D) => roll.call(vec)),
+    pitch    : describeValue((vec: HasPoint3D) => pitch.call(vec)),
+    yaw      : Object.getOwnPropertyDescriptor(Vector2D, 'yaw') as PropertyDescriptor,
+    dot      : describeValue((a: HasPoint3D, b: HasPoint3D) => dot.call(a, b)),
+    cross    : describeValue((a: HasPoint3D, b: HasPoint3D) => cross.call(a, b))
+    });
+  }
 
-Vector3D.prototype.add = function add (this: Vector3D, vec: Point3D) {
-  return Vector3D.add(this, vec);
-}
-
-Vector3D.prototype.sub = function sub (this: Vector3D, vec: Point3D) {
-  return Vector3D.sub(this, vec);
-}
-
-Vector3D.prototype.hadamard = function hadamard (this: Vector3D, vec: Point3D) {
-  return Vector3D.hadamard(this, vec);
-}
-
-
-interface Vector3D extends Point3D {
-  add      (vec: Point3D): Vector3D;
-  sub      (vec: Point3D): Vector3D;
-  hadamard (vec: Point3D): Vector3D;
-
-  scale (): Vector3D;
-  scale (scale: number): Vector3D;
-  unit (): Vector3D;
-
-  dot   (vec: Point3D): number;
-  cross (vec: Point3D): Vector3D;
-
-  toArray (vec: Point3D): [number, number, number];
-
-  prototype: Vector3D;
-}
 
 export default Vector3D;
 
-declare module 'tmath' {  export const Vector3D: Vector3D;  }
+
+interface Vector3D extends HasPoint3D {
+  add      (vec: HasPoint3D): Vector3D;
+  sub      (vec: HasPoint3D): Vector3D;
+  hadamard (vec: HasPoint3D): Vector3D;
+
+  scale (scale?: number): Vector3D;
+  unit (): Vector3D;
+
+  mag  (): number;
+  roll (): number;
+  pitch(): number;
+  yaw  (): number;
+
+  dot   (vec: HasPoint3D): number;
+  cross (vec: HasPoint3D): Vector3D;
+}

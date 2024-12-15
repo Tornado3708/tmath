@@ -4,4 +4,5 @@ src
 *.log
 .git
 .github
-config
+tsconfig.json
+webpack.config.js

@@ -1,52 +1,68 @@
-import { HasRadius } from "tmath";
-import buffer from "./buffer.js";
-import Vector2D from "./Vector2D.js";
+import { HasRadius, HasPoint2D } from "./types.js";
+import { x, y, radius } from "./buffers";
 
+class Circle {
 
+  constructor ();
+  constructor (radius: number);
+  constructor (x: number, y: number, radius: number);
+  constructor (hasRadius: HasRadius);
+  constructor (circle: HasPoint2D & HasRadius);
+  constructor (pos: HasPoint2D, hasRadius: HasRadius);
 
-type CircleParameters = [hasRadius: HasRadius] | [circle: Circle] | [radius: number]  | [position: Vector2D, hasRadius: HasRadius] | [x: number, y: number, radius: number] | [];
-
-
-
-export default class Circle {
-
-  x      !:number;
-  y      !:number;
-  radius !:number;
-
-  constructor (...args: CircleParameters) {
-    buffer.create(this, 'x', 'y', 'radius');
-
-    switch (args.length) {
-      case 0: return this;
-      case 1:
-        if (args[0] && typeof args[0] === 'object' && 'radius' in args[0]) {
-          this.radius = args[0].radius;
-
-          if ('x' in args[0] && 'y' in args[0])
-            [this.x, this.y] = Vector2D.toArray(args[0]);
-        
-        } else this.radius = args[0];
-      case 2:
-        [this.x, this.y] = Vector2D.toArray(args[0] as Vector2D);
-        this.radius = (args[1] as HasRadius).radius;
-      default: [this.x, this.y, this.radius] = args as [number, number, number];
+  constructor (...args: any[]) {
+    x     .set(this, 0);
+    y     .set(this, 0);
+    radius.set(this, 0);
+    
+    if (typeof args[0] === 'object' && args[0]) {
+      this.x = args[0]?.x;
+      this.y = args[0]?.y;
+      this.radius = args[ +(typeof args[1] === 'object' && args[1]) ]?.radius;
+    }
+    else {
+      [this.x, this.y, this.radius] = args;
     }
   }
 }
 
-function diameter ({ radius }: HasRadius) {
-  return radius * 2;
+
+
+{
+  const 
+    defaultDescriptor: PropertyDescriptor = { configurable : !1, enumerable : !1 },
+    enumerable       : PropertyDescriptor = { configurable : !1, enumerable : !0 },
+    describeValue = <T>(value: T, descriptor: PropertyDescriptor = defaultDescriptor) => ({ ...descriptor, value }),
+    describeAccessor = (buffer: WeakMap<Circle, number>, descriptor: PropertyDescriptor = defaultDescriptor) => {
+      return (Object.assign({
+        set (this: Circle, value: number) { buffer.set(this, +value || 0) },
+        get (this: Circle)                { return buffer.get(this) || 0 }
+      },
+      descriptor))};
+  
+
+  function diameter     (this: HasRadius) { return this.radius *  2};
+  function circumstance (this: HasRadius) { return this.radius *  2 * Math.PI};
+  function area         (this: HasRadius) { return this.radius ** 2 * Math.PI};
+
+  Object.assign(Circle.prototype, {
+    x            : describeAccessor(x     , enumerable),
+    y            : describeAccessor(y     , enumerable),
+    radius       : describeAccessor(radius, enumerable),
+    diameter     : describeValue(diameter    , defaultDescriptor),
+    circumstance : describeValue(circumstance, defaultDescriptor),
+    area         : describeValue(area        , defaultDescriptor)
+  });
 }
 
-function circumstance (circle: HasRadius) {
-  return diameter(circle) * Math.PI;
+export default Circle;
+
+interface Circle {
+  x:      number;
+  y:      number; 
+  radius: number;
+
+  diameter    (): number;
+  circumstance(): number;
+  area        (): number;
 }
-
-function area ({ radius }: HasRadius) {
-  return radius ** 2 * Math.PI;
-}
-
-
-
-Object.freeze(Circle);

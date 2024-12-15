@@ -1,4 +1,10 @@
 /node_modules
-config
 /src/test
+/dist
+dev.md
+/dist
+tsconfig.json
+webpack.config.js
+todo.md
+index.htm
 dev.md

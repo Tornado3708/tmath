@@ -1,0 +1,2 @@
+export declare const x: WeakMap<object, any>, y: WeakMap<object, any>, z: WeakMap<object, any>, radius: WeakMap<object, any>, width: WeakMap<object, any>, height: WeakMap<object, any>;
+//# sourceMappingURL=buffers.d.ts.map

@@ -2,14 +2,12 @@
   "name": "@tornado3708/tmath",
   "version": "0.8.0",
   "description": "Math library.",
-  "types": "./dist/cjs.index.d.ts",
-  "main": "./dist/cjs/index.js",
-  "browser": "dist/esm/index.js",
+  "types": "./types/index.d.ts",
+  "main": "./dist/index.cjs",
+  "browser": "dist/index.mjs",
   "scripts": {
-    "test": "node ./dist/cjs/test/index.js",
-    "build:cjs": "tsc --project ./config/tsconfig.cjs.json",
-    "build:esm": "tsc --project ./config/tsconfig.esm.json",
-    "build": "npm run build:cjs && npm run build:esm"
+    "test": "echo \"x1b[32m Does not exist\"",
+    "build": "webpack"
   },
   "author": "Tornado3708",
   "license": "MIT",
@@ -17,9 +15,7 @@
     "@types/node": "^20.14.10",
     "ts-loader": "^9.5.1",
     "typescript": "^5.5.4",
-    "webpack": "^5.92.1"
-  },
-  "dependencies": {
-    "undici": "^6.19.2"
+    "webpack": "^5.94.0",
+    "webpack-cli": "^5.1.4"
   }
 }
